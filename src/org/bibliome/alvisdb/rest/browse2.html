@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>OntoBiotope Database</title>
+<link rel="stylesheet" href="css/jqx.base.css" type="text/css" />
+<link rel="stylesheet" href="css/jqx.energyblue.css" type="text/css" />
+<style>
+
+body {
+	background-color: #ffffdd;
+	padding-left: 0mm;
+	padding-right: 0mm;
+	font-family: sans-serif;
+}
+
+#header {
+}
+
+#logo {
+	float: left;
+}
+
+#logo img {
+	height: 15mm;
+}
+
+#title {
+	margin-left: auto;
+	margin-right: auto;
+	width: 30%;
+	text-align: center;
+}
+
+#title span {
+	float: left;
+	color: #5e7e25;
+	font-size: 200%;
+	font-weight: bold;
+}
+
+#description {
+	clear: both;
+	width: 60%;
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 10mm;
+	padding: 3mm;
+	background-color: #eeeeff;
+	border-radius: 5mm;
+	border-color: #aaaaff;
+	border-style: solid;
+	border-width: 2px;
+}
+
+#description p {
+}
+
+#main {
+	margin-top: 20mm;
+	float: left;
+	clear: both;
+	width: 100%;
+}
+
+.panel {
+  	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+  	-moz-box-sizing: border-box;    /* Firefox, other Gecko */
+  	box-sizing: border-box;
+	width: 47.5%;
+	float: left;
+}
+
+#taxon-panel {
+	padding-left: 5mm;
+}
+
+#habitat-panel {
+	padding-right: 5mm;
+}
+
+#control {
+	width: 5%;
+	float: left;
+	margin-top: 32mm;
+}
+
+.search {
+	float: left;
+	padding-bottom: 10mm;
+}
+
+#taxon-search {
+	margin-left: 10mm;
+}
+
+#habitat-search {
+}
+
+.search-input {
+}
+
+#taxon-search-input {
+}
+
+#habitat-search-input {
+}
+
+.path {
+	height: 10mm;
+	clear: both;
+	float: left;
+	padding-bottom: 5mm;
+}
+
+#taxon-path {
+	margin-left: 10mm;
+}
+
+#habitat-path {
+}
+
+.path-buttons {
+	font-size: 70%;
+}
+
+#taxon-path-buttons {
+}
+
+#habitat-path-buttons {
+}
+
+.depth {
+	float: left;
+}
+
+#taxon-depth {
+	clear: both;
+	margin-right: 3mm;
+}
+
+#habitat-depth {
+	margin-left: 3mm;
+}
+
+.depth-minus {
+	float: left;
+}
+
+#taxon-depth-minus {
+}
+
+#habitat-depth-minus {
+}
+
+.depth-plus {
+	clear: both;
+	float: left;
+}
+
+#taxon-depth-plus {
+}
+
+#habitat-depth-plus {
+}
+
+.treemap {
+	position: relative;
+	float: left;
+	width: 90%;
+	height: 600;
+}
+
+#taxon-treemap {
+}
+
+#habitat-treemap {
+}
+
+.treemap-widget {
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 600;
+	z-index: 2;
+}
+
+#taxon-treemap-widget {
+}
+
+#habitat-treemap-widget {
+}
+
+.treemap-wait {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 72px;
+	height: 72px;
+	margin-left: -36px;
+	margin-top: -36px;
+	border-radius: 36px;
+	text-align: center;
+	background-color: #FFFFFF;
+	opacity: 0.8;
+	display: none;
+	z-index: 4;
+	border-width: 3;
+}
+
+#taxon-treemap-wait {
+}
+
+#habitat-treemap-wait {
+}
+
+.tooltip {
+}
+
+.tooltip-label {
+	font-weight: bold;
+}
+
+.tooltip-count {
+	font-style: italic;
+	font-size: 80%;
+}
+
+#detail-window {
+}
+
+#detail-table {
+	margin: 10mm;
+}
+
+.cell {
+	margin-left: 1em;
+	margin-right: 1em;
+	vertical-align: bottom;
+}
+
+.form {
+	font-size: 70%;
+	vertical-align: middle;
+	margin-left: 1em;
+}
+
+.export {
+	margin-top: 2mm;
+	margin-left: 2mm;
+}
+
+.export-text {
+	margin-right: 5mm;
+}
+
+#footer {
+	clear: both;
+	text-align: center;
+	font-size: 70%;
+	padding-top: 20mm;
+}
+
+
+</style>
+<script type="text/javascript" src="lib/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="lib/jqxcore.js"></script>
+<script type="text/javascript" src="lib/jqxtabs.js"></script>
+<script type="text/javascript" src="lib/jqxinput.js"></script>
+<script type="text/javascript" src="lib/jqxbuttons.js"></script>
+<script type="text/javascript" src="lib/jqxscrollbar.js"></script>
+<script type="text/javascript" src="lib/jqxpanel.js"></script>
+<script type="text/javascript" src="lib/jqxtree.js"></script>
+<script type="text/javascript" src="lib/jqxexpander.js"></script>
+<script type="text/javascript" src="lib/jqxtreemap.js"></script>
+<script type="text/javascript" src="lib/jqxtooltip.js"></script>
+<script type="text/javascript" src="lib/jqxbuttongroup.js"></script>
+<script type="text/javascript" src="lib/jqxwindow.js"></script>
+<script type="text/javascript" src="lib/jqxdraw.js"></script>
+<script type="text/javascript" src="lib/jqxchart.core.js"></script>
+<script type="text/javascript" src="lib/jqxdata.js"></script>
+<script type="text/javascript" src="lib/jqxdata.export.js"></script>
+<script type="text/javascript" src="lib/jqxnumberinput.js"></script>
+<script type="text/javascript" src="lib/jqxdropdownlist.js"></script>
+<script type="text/javascript" src="lib/jqxlistbox.js"></script>
+<script type="text/javascript" src="lib/jqxmenu.js"></script>
+<script type="text/javascript" src="lib/jqxgrid.js"></script>
+<script type="text/javascript" src="lib/jqxgrid.pager.js"></script>
+<script type="text/javascript" src="lib/jqxgrid.selection.js"></script>
+<script type="text/javascript" src="lib/jqxgrid.columnsresize.js"></script>
+<script type="text/javascript" src="lib/jqxgrid.grouping.js"></script>
+<script type="text/javascript" src="lib/jqxgrid.sort.js"></script>
+<script type="text/javascript" src="lib/jqxgrid.export.js"></script>
+<script type="text/javascript">
+var THEME = 'energyblue';
+
+var info = {
+		taxon: {
+			current: null,
+			other: 'habitat',
+			label: 'Taxon',
+			color: '#E6D673',
+			colors: ['#FFED80', '#CCBE66', '#998E4D'],
+			depth: 1
+		},
+		habitat: {
+			current: null,
+			other: 'taxon',
+			label: 'Habitat',
+			color: '#80FFE8',
+			colors: ['#80FFE8', '#66CCBA', '#4D998B'],
+			depth: 1
+		}
+}
+
+var depthMinus =  {
+			suffix: 'minus',
+			verb: 'Decrease',
+			delta: -1,
+			test: function(entityType) { return info[entityType]. depth > 1; },
+			other: function() { return depthPlus; }
+};
+
+var depthPlus = {
+			suffix: 'plus',
+			verb: 'Increase',
+			delta: 1,
+			test: function(entityType) { return info[entityType]. depth < 3; },
+			other: function() { return depthMinus; }
+};
+
+var launch = function() {
+	$.ajax({
+		url: 'entity/taxon',
+		success: function(taxonData, status, xhr) {
+			info['taxon'].current = taxonData.id;
+			$.ajax({
+				url: 'entity/habitat',
+				success: function(habitatData, status, xhr) {
+					info['habitat'].current = habitatData.id;
+					updatePath('taxon');
+					updatePath('habitat');
+					updateTreemap('taxon', false);
+					updateTreemap('habitat', false);
+					createSearch('taxon');
+					createSearch('habitat');
+					createDepth('taxon', depthMinus);
+					createDepth('taxon', depthPlus);
+					createDepth('habitat', depthMinus);
+					createDepth('habitat', depthPlus);
+					createTableWidgets();
+				}
+			});
+		}
+	});
+};
+
+var createTableWidgets = function() {
+	var e = $('#table-control')
+	e.jqxButton({
+		theme: THEME,
+		width: '48px'
+	});
+	e.jqxTooltip({
+		content: '<span>Open detailed table.</span>'
+	});
+	e.on('click', showTable);
+	
+	var we = $('#detail-window');
+	we.jqxWindow({
+        showCollapseButton: true,
+        width: 'auto',
+        height: 'auto',
+        minWidth: 1280,
+        minHeight: 430,
+        maxWidth: 1800,
+        isModal: true,
+        resizable: true,
+        autoOpen: false
+    });
+	we.on('close', function(event) {
+		$('#detail-table').jqxGrid('destroy');
+	})
+};
+
+var entityRenderer = function(entityType) {
+	var fun = function(rowindex, column, value, _defaulthtml, _settings, record) {
+		var form = record[entityType + '-form'];
+    	if (value.toLowerCase() === form.toLowerCase().slice(0, value.length) && Math.abs(form.length - value.length) <= 3) {
+    		return '<span class="cell">' + value + '</span>';
+    	}
+    	return '<span class="cell">' + value + '<span class="form">['+form+']</span></span>';
+    }
+	return fun;
+}
+
+var showTable = function() {
+	var taxonName = $('#taxon-path-buttons #' + info.taxon.current).html();
+	var habitatName = $('#habitat-path-buttons #' + info.habitat.current.replace(':', '\\:')).html();
+
+	$('#detail-table').jqxGrid('destroy');
+	var we = $('#detail-window');
+	we.jqxWindow('title', '<strong>' + taxonName + ' X ' + habitatName + '</strong>');
+	we.jqxWindow('open');
+	$('#detail-place').append('<div id="detail-table"></div>');
+	var te = $('#detail-table');
+
+    var source = {
+        datatype: 'json',
+        url: 'table/localization/taxon/'+info.taxon.current+'?oth='+info.habitat.current,
+        root: 'list',
+        formatdata: function(data) {
+        	console.log(data);
+        	if (data.sortdatafield === 'title') {
+        		data.sortdatafield = 'taxon-title';
+        	}
+        	return data;
+        }
+    };
+    var dataAdapter = new $.jqx.dataAdapter(source, {
+			downloadComplete: function (data, status, xhr) {
+ 				source.totalrecords = parseInt(data.count);
+            },
+            loadError: function (xhr, status, error) {
+                throw new Error(error.toString());
+            }
+    });
+
+    te.on('bindingcomplete', function(event) {
+    	var src = te.jqxGrid('source');
+    	var sortable = (src.totalrecords <= 10000);
+    	te.jqxGrid('sortable', sortable);
+    	if (sortable) {
+    		te.on('sort', function(event) {
+    			te.jqxGrid('updatebounddata');
+    		})
+    	}
+    });
+	te.jqxGrid({
+		theme: THEME,
+		width: '94%',
+		height: '80%',
+        source: dataAdapter,
+        pageable: true,
+        columnsresize: true,
+        virtualmode: true,
+        rendergridrows: function(params) {
+        	return params.data;
+        },
+        pagesizeoptions: ['100', '1000', '10000'],
+        pagesize: 100,
+        groupable: true,
+        groups: [],
+        showstatusbar: true,
+        renderstatusbar: function (statusbar) {
+        	var container = $('<div class="export"></div>');
+        	var url = 'export/localization/taxon/'+info.taxon.current+'?oth='+info.habitat.current;
+        	statusbar.append(container);
+        	var convert = $('<a class="export-text" alt="Download the data as CSV" target="_new" href="'+url+'">CSV</a>');
+        	container.append(convert);
+        	convert = $('<a class="export-text" alt="Download the data as CSV (with habitat paths)" target="_new" href="'+url+'&othpath=true">CSV (with habitat paths)</a>');
+        	container.append(convert);
+        },
+       	columns: [
+            {
+            	text: 'Title',
+            	datafield: 'title',
+            	cellsrenderer: function(rowindex, column, value, _defaulthtml, _settings, record) {
+            		return '<a class="cell" href="http://www.ncbi.nlm.nih.gov/pubmed/'+record.doc+'" target="_new">'+value+'</a>';
+            	}
+            },
+            {
+            	text: 'Taxon',
+            	datafield: 'taxon-name',
+                cellsrenderer: entityRenderer('taxon')
+            },
+            {
+            	text: 'Habitat',
+            	datafield: 'habitat-name',
+                cellsrenderer: entityRenderer('habitat')
+
+            }
+        ]
+    });
+}
+
+
+
+var createDepth = function(entityType, direction) {
+	var e = $('#' + entityType + '-depth-' + direction.suffix);
+	e.jqxButton({
+		theme: THEME,
+		width: 18,
+		height: 18,
+		disabled: !direction.test(entityType)
+	});
+	e.jqxTooltip({
+		theme: THEME,
+		content: '<span>' + direction.verb + ' the ' + entityType + ' treemap depth</span>'
+	});
+	e.on('click', function(event) {
+		if (direction.test(entityType)) {
+			info[entityType].depth += direction.delta;
+			if (!direction.test(entityType)) {
+				e.jqxButton({ disabled: true });
+			}
+			$('#' + entityType + '-depth-' + direction.other().suffix).jqxButton({ disabled: false });
+			updateTreemap(entityType);
+		}
+	});
+};
+
+var createSearch = function(entityType) {
+	var complete = function(query, response) {
+		$.ajax({
+			url: 'complete/'+entityType+'/'+query+'?contains=true&max=20&relation=localization&role='+entityType,
+			success: function(data, status, xhr) {
+		        response(data);
+		    }
+		});
+	};
+	var e = $('#'+entityType+'-search-input');
+	e.empty();
+	e.jqxInput({ theme: THEME, source: complete, items: 20, placeHolder: 'Search ' + entityType, width: 400, height: 25});
+	e.on('select', function (event) {
+	    if (event.args) {
+	        var item = event.args.item;
+	        if (item) {
+	        	updateEntity(entityType, item.value);
+	        }
+	    }
+	});
+};
+
+var updateEntity = function(entityType, id) {
+	console.log(entityType + ' = ' + id);
+	info[entityType].current = id;
+	info[entityType].depth = 1;
+	$('#' + entityType + '-depth-minus').jqxButton({ disabled: true });
+	$('#' + entityType + '-depth-plus').jqxButton({ disabled: false });
+	updatePath(entityType);
+	updateTreemap('taxon', true);
+	updateTreemap('habitat', true);
+};
+
+var updatePath = function(entityType) {
+	var id = info[entityType].current;
+	$.ajax({
+		url: 'entity/' + entityType + '/' + id + '?fields=path&pathfields=name',
+		success: function(data, status, xhr) {
+			var pathEltId = entityType + '-path';
+			var pathButtonsEltId = entityType + '-path-buttons';
+			$('#'+pathButtonsEltId).jqxButtonGroup('destroy');
+			$('#'+pathEltId).empty().append('<div id="'+pathButtonsEltId+'" class="path-buttons"></div>');
+			var pathButtonsElt = $('#'+pathButtonsEltId);
+			var path = data.path;
+			var color = info[entityType].colors[0];
+			for (var i = 0; i < path.length; i++) {
+				var p = path[i];
+				var last = (i === (path.length - 1));
+				var b = $('<button>').attr('id', p.id).html(p.name).jqxButton({ theme: THEME, template: 'link', height: 18 });
+				if (last) {
+					b.css({
+						backgroundColor: color
+					});
+				}
+				pathButtonsElt.append(b);
+			}
+			pathButtonsElt.jqxButtonGroup({
+				theme: THEME,
+				mode: 'default'
+			});
+			pathButtonsElt.on('buttonclick', function(event) {
+				var eid = event.args.button[0].id;
+				if (eid != id) {
+					updateEntity(entityType, event.args.button[0].id);
+				}
+			});
+		}
+	});
+};
+
+var get_font_size = function(element, text, header, min, max) {
+	var longest = 0;
+	if (header) {
+		longest = text.length;
+	}
+	else {
+		var words = text.split(' ');
+		for (var i = 0; i < words.length; i++) {
+			var l = words[i].length;
+			longest = Math.max(longest, l);
+		}
+	}
+	var width = element.width();
+	return Math.min(max, Math.max(min, width / longest));
+}
+
+var _gfx_treemap = function(entityType, dataAdapter, max) {
+	var records = dataAdapter.getRecordsHierarchy('id', 'parentid', 'items', [{ name: 'text', map: 'label' }, { name: 'data', map: 'data' }]);
+    var widgetId = entityType + '-treemap-widget';
+    $('#' + widgetId).jqxTreeMap('destroy');
+    $('#' + entityType + '-treemap').append('<div id="' + widgetId + '" class="treemap-widget"></div>');
+    var oe = $('#' + widgetId);
+    oe.jqxTreeMap({
+    	theme: THEME,
+        width: '100%',
+        height: 600,
+        source: records,
+        baseColor: info[entityType].colors[0],
+        renderCallbacks: {
+            '*': function (element, data) {
+				var fs = get_font_size(element, data.label, data.data.depth < info[entityType].depth, 8, 16);
+                element.css({
+                    fontSize: fs+'px',
+					fontWeight: 'normal',
+                    color: 'Black',
+                    backgroundColor: info[entityType].colors[data.data.depth-1],
+                    borderWidth: 4 - data.data.depth
+                });
+                element.click(function() { updateEntity(entityType, data.data.id); });
+                element.jqxTooltip({
+            	    theme: THEME,
+                    content: '<div class="tooltip"><div class="tooltip-label">' + data.label + '</div><div class="tooltip-count">' + data.data.count + '</div></div>',
+                    position: 'mouse',
+                    autoHideDelay: 2000
+                });
+            }
+        }
+    });
+}
+
+var updateTreemap = function(entityType) {
+	var id = info[entityType].current;
+	var otherType = info[entityType].other;
+	var otherId = info[otherType].current;
+	var wait = $('#' + entityType + '-treemap-wait');
+	wait.css({display: 'block'});
+	$.ajax({
+		url: 'treemap/localization/' + otherType + '/' + otherId + '?fun=sqrt&depth='+info[entityType].depth+'&oth=' + id,
+		success: function(data, status, xhr) {
+			var max = data.max;
+            var source =
+            {
+                datatype: "json",
+                datafields: [
+                    { name: 'id' },
+                    { name: 'parentid' },
+                    { name: 'text' },
+                    { name: 'value' },
+                    { name: 'data' }
+                ],
+                id: 'id',
+                localdata: data.items
+            };
+
+            var dataAdapter = new $.jqx.dataAdapter(source, {async: false, autoBind: true, loadError: function (xhr, status, error) { alert('Error loading "' + source.url + '" : ' + error); }});
+            dataAdapter.dataBind();
+            _gfx_treemap(entityType, dataAdapter, data.max);
+			wait.css({display: 'none'});
+			}
+		});
+	};
+
+	$(document).ready(function() {
+		launch();
+	});
+</script>
+
+</head>
+<body>
+	<div id="content">
+		<div id="header">
+			<div id="logo">
+				<img src="css/images/Logotype-INRA-transparent.png"/>
+			</div>
+			<div id="title">
+				<span>OntoBiotope Database</span>
+			</div>
+		</div>
+		<div id="description">
+			<p>Welcome to the Ontobiotope database. You can browse through
+				bacteria and their habitats found in over 700,000 PubMed abstracts.</p>
+			<p>You can start exploring the data either by bacteria taxonomy,
+				or by the bacteria habitat ontology.</p>
+		</div>
+		<div id="main">
+			<div id="taxon-panel" class="panel">
+				<div id="taxon-search" class="search">
+					<input id="taxon-search-input" class="search-input"/>
+				</div>
+				<div id="taxon-path" class="path">
+					<div id="taxon-path-buttons" class="path-buttons">
+					</div>
+				</div>
+				<div id="taxon-depth" class="depth">
+				    <div id="taxon-depth-minus" class="depth-minus">
+						<img src="css/images/glyphicons_191_circle_minus.png" height="16" width="16"/>
+					</div>
+				    <div id="taxon-depth-plus" class="depth-plus">
+						<img src="css/images/glyphicons_190_circle_plus.png" height="16" width="16"/>
+					</div>
+				</div>
+				<div id="taxon-treemap" class="treemap">
+					<div id="taxon-treemap-wait" class="treemap-wait">
+						<img src="css/images/reload.gif" width="72px"/><br/>
+					</div>
+					<div id="taxon-treemap-widget" class="treemap-widget">
+					</div>
+				</div>
+			</div>
+			<div id="control">
+				<button id="table-control">
+					<img src="css/images/glyphicons_119_table.png" width="24"/>
+				</button>
+			</div>
+			<div id="habitat-panel" class="panel">
+				<div id="habitat-search" class="search">
+					<input id="habitat-search-input" class="search-input"/>
+				</div>
+				<div id="habitat-path" class="path">
+					<div id="habitat-path-buttons" class="path-buttons">
+					</div>
+				</div>
+				<div id="habitat-treemap" class="treemap">
+					<div id="habitat-treemap-wait" class="treemap-wait">
+						<img src="css/images/reload.gif" width="72px"/><br/>
+					</div>
+					<div id="habitat-treemap-widget" class="treemap-widget">
+					</div>
+				</div>
+				<div id="habitat-depth" class="depth">
+					<div id="habitat-depth-minus" class="depth-minus">
+						<img src="css/images/glyphicons_191_circle_minus.png" height="16" width="16"/>
+					</div>
+					<div id="habitat-depth-plus" class="depth-plus">
+						<img src="css/images/glyphicons_190_circle_plus.png" height="16" width="16"/>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="footer">
+		Copyright 2014 INRA
+		</div>
+	</div>
+	<div id="detail-window">
+		<div id="detail-place">
+			<div id="detail-table">
+			</div>
+		</div>
+	</div>
+</body>
+</html>

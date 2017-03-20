@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>OntoBiotope Database</title>
+<link rel="stylesheet" href="css/jqx.base.css" type="text/css" />
+<link rel="stylesheet" href="css/jqx.energyblue.css" type="text/css" />
+<style>
+
+body {
+	background-color: #ffffdd;
+	padding-left: 10mm;
+	padding-right: 10mm;
+	font-family: sans-serif;
+}
+
+#header {
+}
+
+#logo {
+	float: left;
+}
+
+#logo img {
+	height: 15mm;
+}
+
+#title {
+	margin-left: auto;
+	margin-right: auto;
+	width: 30%;
+	text-align: center;
+}
+
+#title span {
+	float: left;
+	color: #5e7e25;
+	font-size: 200%;
+	font-weight: bold;
+}
+
+#description {
+	clear: both;
+	width: 60%;
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 10mm;
+	padding: 3mm;
+	background-color: #eeeeff;
+	border-radius: 5mm;
+	border-color: #aaaaff;
+	border-style: solid;
+	border-width: 2px;
+}
+
+#description p {
+}
+
+#input {
+	margin-top: 20mm;
+	float: left;
+	clear: both;
+}
+
+.input-label {
+	margin-top: 3mm;
+	font-size: 120%;
+}
+
+#output {
+	float: right;
+}
+
+#output-options {
+	display: none;
+	float: left;
+}
+
+.option-button {
+}
+
+#revert {
+	margin: 1mm;
+	float: left;
+}
+
+#treemap-info {
+	float: left;
+	padding-left: 5mm;
+}
+
+#pivot-name {
+	font-size: 120%;
+	font-weight: bold;
+	margin-bottom: 5mm;
+	float: left;
+}
+
+#place-filter {
+	float: left;
+	clear: both;
+}
+
+#filter-name {
+	float: left;
+	font-weight: bold;
+	vertical-align: text-bottom;
+	margin-bottom: 17px;
+	margin-right: 5mm;
+}
+
+#filter {
+	float: left;
+	vertical-align: middle;
+}
+
+#output-tabs {
+	clear: both;
+}
+
+#footer {
+	clear:both;
+	text-align: center;
+	padding-top: 20mm;
+	font-size: 80%;
+}
+</style>
+<script type="text/javascript" src="lib/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="lib/jqxcore.js"></script>
+<script type="text/javascript" src="lib/jqxdata.js"></script>
+<script type="text/javascript" src="lib/jqxtabs.js"></script>
+<script type="text/javascript" src="lib/jqxinput.js"></script>
+<script type="text/javascript" src="lib/jqxbuttons.js"></script>
+<script type="text/javascript" src="lib/jqxscrollbar.js"></script>
+<script type="text/javascript" src="lib/jqxpanel.js"></script>
+<script type="text/javascript" src="lib/jqxtree.js"></script>
+<script type="text/javascript" src="lib/jqxexpander.js"></script>
+<script type="text/javascript" src="lib/jqxtreemap.js"></script>
+<script type="text/javascript" src="lib/jqxtooltip.js"></script>
+<script type="text/javascript" src="lib/jqxbuttongroup.js"></script>
+<script type="text/javascript" src="lib/jqxdatatable.js"></script>
+<script type="text/javascript" src="lib/jqxwindow.js"></script>
+<script type="text/javascript">
+var THEME = 'energyblue';
+
+var completeEntities = function(entityType) {
+	return function(query, response) {
+	    $.get('complete/'+entityType+'/'+query+'?contains=true&max=20&relation=localization&role='+entityType, function(data, status) {
+	        response(data);
+	    });
+	}
+};
+
+var makeSelectEntity = function(relType, pivotRole, pivotType, otherType, baseColor) {
+var self = function(pivotId, otherId0) {
+	$.ajax({
+		url: 'entity/'+pivotType+'/' + pivotId + '?fields=name&typefields=name',
+		success: function(data, status, xhr) {
+			$('#pivot-name').html(data.type.name + ': ' + data.name);
+		}
+	});
+	var otherId = otherId0;
+	if (otherId === undefined) {
+		$.ajax({
+			async: false,
+			url: 'root/' + otherType,
+			success: function(data, status, xhr) {
+				otherId = data[0].value;
+			}
+		});
+	}
+	$('#'+otherType+'-filter').attr('value', otherId);
+	$.ajax({
+		url: 'entity/'+otherType+'/'+otherId+'?fields=path&pathfields=name&typefields=name',
+		success: function(data, status, xhr) {
+			$('#filter').jqxButtonGroup('destroy');
+			$('#place-filter').empty().append('<div id="filter-name">'+data.type.name+': </div><div id="filter"></div>');
+			var f = $('#filter');
+			var path = data.path;
+			for (var i = 0; i < path.length; i++) {
+				var p = path[i];
+				var b = $('<button>').attr('id', p.id).html(p.name).jqxButton({ theme: THEME, template: 'link', disabled: (i == path.length - 1)});
+				f.append(b);
+			}
+			f.jqxButtonGroup({ theme: THEME, mode: 'default' });
+			f.on('buttonclick', function(event) {
+				self(pivotId, event.args.button[0].id);
+			})
+		}
+	});
+	var url = 'treemap/'+relType+'/'+pivotRole+'/' + pivotId + '?fun=sqrt&oth=' + otherId;
+	$.ajax({
+		url: url,
+		success: function(data, status, xhr) {
+            var source =
+            {
+                datatype: "json",
+                datafields: [
+                    { name: 'id' },
+                    { name: 'parentid' },
+                    { name: 'text' },
+                    { name: 'value' }
+                ],
+                id: 'id',
+                localdata: data.items
+            };
+
+            // create data adapter.
+            var dataAdapter = new $.jqx.dataAdapter(source);
+            // perform Data Binding.
+            dataAdapter.dataBind();
+            // get the treemap sectors. The first parameter is the item's id. The second parameter is the parent item's id. The 'items' parameter represents 
+            // the sub items collection name. Each jqxTreeMap item has a 'label' property, but in the JSON data, we have a 'text' field. The last parameter 
+            // specifies the mapping between the 'text' and 'label' fields.  
+            var records = dataAdapter.getRecordsHierarchy('id', 'parentid', 'items', [{ name: 'text', map: 'label' }, {name: 'id', map: 'data'}]);
+            $('#treemap').jqxTreeMap('destroy');
+            $('#place-treemap').append('<div id="treemap"></div>');
+            var oe = $('#treemap');
+            oe.jqxTreeMap({
+            	theme: THEME,
+                width: 840,
+                height: 600,
+                source: records,
+                baseColor: baseColor,
+                renderCallbacks: {
+                    '*': function (element, data) {
+                       var nThreshold = 105;
+                       var bgDelta = (data.rgb.r * 0.299) + (data.rgb.g * 0.587) + (data.rgb.b * 0.114);
+                       var foreColor = (255 - bgDelta < nThreshold) ? 'Black' : 'White';
+                       element.css({
+                            color: foreColor
+                       });
+                       element.click(function() { self($('#selected-'+pivotType).attr('value'), data.data); });
+                       element.jqxTooltip({
+                    	    theme: THEME,
+                            content: '<div style="">' + data.label + '</div>',
+                            position: 'mouse',
+                            autoHideDelay: 6000
+                       });
+                    }
+                }
+            });
+        	$('#selected-'+pivotType).attr('value', pivotId);
+            $('#selected-'+otherType).attr('value', '');
+            $('#tree-'+pivotType).jqxTree('selectItem', null);
+            $('#input-'+pivotType).val('');
+            $('#'+otherType+'-filter').attr('value', otherId);
+            $('#output-options').css({display: 'block'});
+            makeTable();
+		}
+	});
+};
+return self;
+}
+
+var selectTaxon = makeSelectEntity('localization', 'taxon', 'taxon', 'habitat', '#88ff88');
+var selectHabitat = makeSelectEntity('localization', 'habitat', 'habitat', 'taxon', '#ff8888');
+
+var makeTree = function(elementId, entityType, selectHook) {
+	    var taxaTree = $('#' + elementId);
+	    var source = null;
+	    $.ajax({
+	    	async: false,
+	    	url: 'root/' + entityType,
+	        success: function (data, status, xhr) {
+	            source = data;
+	        }
+	    });
+	    taxaTree.jqxTree({ theme: THEME, source: source, width: 400, height: 554 });
+
+	    taxaTree.on('select', function (event) {
+	    	selectHook(taxaTree.jqxTree('getItem', event.args.element).value);
+	    });
+	    taxaTree.on('expand', function (event) {
+	        var label = taxaTree.jqxTree('getItem', event.args.element).label;
+	        var $element = $(event.args.element);
+	        var loader = false;
+	        var loaderItem = null;
+	        var children = $element.find('ul:first').children();
+	        $.each(children, function () {
+	            var item = taxaTree.jqxTree('getItem', this);
+	            if (item && item.label == 'Loading...') {
+	                loaderItem = item;
+	                loader = true;
+	                return false
+	            };
+	        });
+	        if (loader) {
+	            $.ajax({
+	                url: 'children/'+entityType+'/' + loaderItem.value + '?relation=localization&role='+entityType,
+	                success: function (data, status, xhr) {
+	                    var items = data;
+	                    taxaTree.jqxTree('addTo', items, $element[0]);
+	                    taxaTree.jqxTree('removeItem', loaderItem.element);
+	                }
+	            });
+	        }
+	    });
+};
+
+var makeTable = function(_event) {
+	var relType = 'localization';
+	var pivotType;
+	var pivotRole;
+	var pivotId;
+	var otherType;
+	var otherRole;
+	var otherId;
+	
+	pivotId = $('#selected-taxon').attr('value');
+	if (pivotId) {
+		pivotType = 'taxon';
+		pivotRole = 'taxon';
+		otherType = 'habitat';
+		otherRole = 'habitat';
+		otherId = $('#habitat-filter').attr('value');
+	}
+	else {
+		pivotId = $('#selected-habitat').attr('value');
+		if (pivotId) {
+			pivotType = 'habitat';
+			pivotRole = 'habitat';
+			otherType = 'taxon';
+			otherRole = 'taxon';
+			otherId = $('#taxon-filter').attr('value');
+		}
+		else {
+			return;
+		}
+	}
+	
+    // prepare the data
+    var source =
+    {
+        dataType: "json",
+        dataFields: [
+            { name: 'doc', type: 'string' },
+            { name: 'section', type: 'string' },
+            { name: 'title', type: 'string' },
+            { name: 'taxon-id', type: 'string' },
+            { name: 'taxon-name', type: 'string' },
+            { name: 'habitat-id', type: 'string' },
+            { name: 'habitat-name', type: 'string' },
+        ],
+        root: 'list',
+        url: 'table/'+relType+'/'+pivotRole+'/'+pivotId+'?oth='+otherId
+    };
+
+    var dataAdapter = new $.jqx.dataAdapter(source,
+        {
+/*             formatData: function (data) {
+                // update the $skip and $top params of the OData service.
+                // data.pagenum - page number starting from 0.
+                // data.pagesize - page size
+                data.$skip = data.pagenum * data.pagesize;
+                data.$top = data.pagesize;
+                data.$inlinecount = "allpages";
+
+                return data;
+            },
+ */
+ 			downloadComplete: function (data, status, xhr) {
+ 				source.totalRecords = parseInt(data['count']);
+            },
+            loadError: function (xhr, status, error) {
+                throw new Error(error.toString());
+            }
+        }
+    );
+
+    $("#detail").jqxDataTable(
+    {
+        width: 800,
+        pageable: true,
+        pagerButtonsCount: 10,
+        pagerPosition: 'top',
+        serverProcessing: true,
+        source: dataAdapter,
+        altRows: true,
+        columnsResize: true,
+        sortable: true,
+        columns: [
+            { text: 'Taxon', dataField: 'taxon-name', width: 200 },
+            { text: 'Habitat', dataField: 'habitat-name', width: 200 },
+            { 
+            	text: 'Title',
+            	dataField: 'title', 
+            	width: 450,
+                cellsRenderer: function (row, column, value, rowData) {
+                	return '<a target="_new" href="http://www.ncbi.nlm.nih.gov/pubmed/'+rowData.doc+'">'+rowData.title+'</a>';
+                }
+            },
+        ]
+    });
+}
+
+
+	
+$(document).ready(function () {
+     
+	$('#input').jqxTabs({ theme: THEME, width: 402, height: 650, position: 'top'});
+	$('#output-tabs').jqxTabs({ theme: THEME, width: 852, height: 650, position: 'top' });
+
+	$("#input-taxon").jqxInput({ theme: THEME, source: completeEntities('taxon'), items: 20, placeHolder: "Taxon", width: 400, height: 25});
+	$("#input-habitat").jqxInput({ theme: THEME, source: completeEntities('habitat'), items: 20, placeHolder: "Habitat", width: 400, height: 25});
+
+	$('#revert').jqxButton({ theme: THEME, width: 40, height: 30 });
+	
+	makeTree('tree-taxon', 'taxon', selectTaxon);
+	//$('#taxon-panel').jqxPanel({ theme: THEME, autoUpdate: true, width: 400, height: 600 });
+	makeTree('tree-habitat', 'habitat', selectHabitat);
+	//$('#habitat-panel').jqxPanel({ theme: THEME, autoUpdate: true, width: 400, height: 600 });
+	
+	$('#revert').on('click', function(event) {
+		var selectedTaxon = $('#selected-taxon').attr('value');
+		if (selectedTaxon) {
+			var habitatFilter = $('#habitat-filter').attr('value');
+			/*selectHabitat(habitatFilter, selectedTaxon);*/
+			selectHabitat(habitatFilter);
+		}
+		else {
+			var selectedHabitat = $('#selected-habitat').attr('value');
+			if (selectedHabitat) {
+				var taxonFilter = $('#taxon-filter').attr('value');
+				/*selectTaxon(taxonFilter, selectedHabitat);*/
+				selectTaxon(taxonFilter);
+			}
+		}
+	});
+	
+	$('#output-tabs').on('tabclick', makeTable);
+	
+    $("#input-taxon").on('select', function (event) {
+        if (event.args) {
+            var item = event.args.item;
+            if (item) {
+            	selectTaxon(item.value);
+            }
+        }
+    });
+	
+    $("#input-habitat").on('select', function (event) {
+        if (event.args) {
+            var item = event.args.item;
+            if (item) {
+            	selectHabitat(item.value);
+            }
+        }
+    });
+    
+    selectTaxon('2');
+});
+        </script>
+</head>
+<body>
+	<div id="content">
+		<input type="hidden" id="selected-taxon"/>
+		<input type="hidden" id="selected-habitat"/>
+		<input type="hidden" id="taxon-filter"/>
+		<input type="hidden" id="habitat-filter"/>
+		<div id="header">
+			<div id="logo">
+				<img src="css/images/Logotype-INRA-transparent.png"/>
+			</div>
+			<div id="title">
+				<span>OntoBiotope Database</span>
+			</div>
+		</div>
+			<div id="description">
+				<p>Welcome to the Ontobiotope database. You can browse through bacteria and their habitats found in over 700,000 PubMed abstracts.</p>
+				<p>You can start exploring the data either by bacteria taxonomy, or by the bacteria habitat ontology.</p>
+			</div>
+		<div id="input">
+			<ul>
+				<li>Taxa</li>
+				<li>Habitats</li>
+			</ul>
+			<div id="taxon-panel">
+				<div class="input-label">Search</div>
+				<input id="input-taxon" />
+				<div class="input-label">Browse</div>
+				<div id="tree-taxon"></div>
+			</div>
+			<div id="habitat-panel">
+				<div class="input-label">Search</div>
+				<input id="input-habitat" />
+				<div class="input-label">Browse</div>
+				<div id="tree-habitat"></div>
+			</div>
+		</div>
+		<div id="output">
+			<div id="output-options" style="display: none">
+				<button id="revert"><img class="option-button" src="css/images/glyphicons_083_random.png"/></button>
+			</div>
+			<div id="treemap-info">
+				<div id="pivot-name"></div>
+				<div id="place-filter">
+					<div id="filter"></div>
+				</div>
+			</div>
+			<div id="output-tabs">
+				<ul>
+					<li>Tree Map</li>
+					<li>Table</li>
+				</ul>
+				<div id="place-treemap">
+					<div id="treemap">
+					</div>
+				</div>
+				<div id="place-detail">
+					<div id="detail">
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="footer">
+		Copyright 2014 INRA
+		</div>
+	</div>
+</body>
+</html>

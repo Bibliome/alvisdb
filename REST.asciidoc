@@ -1,5 +1,7 @@
 = API
 
+:toc:
+
 == Entity types
 
 ----
@@ -385,7 +387,7 @@ Return the amount of each entity at the other end of the specified relation.
 === Examples
 
 [source,json]
-.http://bibliome.jouy.inra.fr/demo/alvisdb/obt/treemap/localization/taxon/1358?depth=2&oth=OBT:000827[/treemap/localization/taxon/1358?depth=2&oth=OBT:000827]
+.http://bibliome.jouy.inra.fr/demo/alvisdb/obt/treemap/localization/taxon/1358?depth=2&oth=OBT:000827[`/treemap/localization/taxon/1358?depth=2&oth=OBT:000827`]
 ----
 {
     "items": [
@@ -491,5 +493,152 @@ Return the amount of each entity at the other end of the specified relation.
     ],
     "total": 18,
     "max": 10
+}
+----
+
+== Relation instances
+
+----
+/table/{rel}/{role}/{id}
+----
+
+Return the instances of the specified relations.
+
+=== Parameters
+
+|===
+| Parameter | Source | Type | Effect
+
+| `rel` | Path | `String` | Relation type identifier
+| `role` | Path | `String` | Argument role
+| `id` | Path | `String` | Entity identifier
+| `oth` | Query | `String` | Entity identifier for the other argument of the relation
+| `pagenum` | Query | `Integer`
+| `pagesize` | Query | `Integer` | Pagination, default: `0` / `10`
+| `sortdatafield` | Query | `String`
+| `sortorder` | Query | `String`
+
+|===
+
+=== Examples
+
+
+[source,json]
+.http://bibliome.jouy.inra.fr/demo/alvisdb/obt/table/localization/taxon/1358?oth=OBT:000827[`/table/localization/taxon/1358?oth=OBT:000827`]
+----
+{
+    "list": [
+        {
+            "doc": "12007863",
+            "section": "title",
+            "title": "Influence of growth conditions on the production of a nisin-like bacteriocin by Lactococcus lactis subsp. lactis A164 isolated from kimchi.",
+            "taxon-id": "1360",
+            "taxon-name": "Lactococcus lactis subsp. lactis",
+            "habitat-id": "OBT:001795",
+            "habitat-name": "kimchi",
+            "taxon-form": "Lactococcus lactis subsp. lactis",
+            "habitat-form": "kimchi"
+        },
+        {
+            "doc": "12007863",
+            "section": "abstract",
+            "title": "Influence of growth conditions on the production of a nisin-like bacteriocin by Lactococcus lactis subsp. lactis A164 isolated from kimchi.",
+            "taxon-id": "1360",
+            "taxon-name": "Lactococcus lactis subsp. lactis",
+            "habitat-id": "OBT:001795",
+            "habitat-name": "kimchi",
+            "taxon-form": "Lactococcus lactis subsp. lactis",
+            "habitat-form": "kimchi"
+        },
+        {
+            "doc": "2126446",
+            "section": "abstract",
+            "title": "Scanning electron microscopic and texture studies on characteristic consistency of Nordic ropy sour milk.",
+            "taxon-id": "1358",
+            "taxon-name": "Lactococcus lactis",
+            "habitat-id": "OBT:002281",
+            "habitat-name": "sour milk",
+            "taxon-form": "Lactococcus lactis ssp. cremoris SBT",
+            "habitat-form": "ropy sour milk"
+        },
+        {
+            "doc": "3933276",
+            "section": "abstract",
+            "title": "Secretory and serum antibodies against Streptococcus lactis, Streptococcus thermophilus, and Lactobacillus bulgaricus in relation to ingestion of fermented milk products.",
+            "taxon-id": "1358",
+            "taxon-name": "Lactococcus lactis",
+            "habitat-id": "OBT:002080",
+            "habitat-name": "yogurt",
+            "taxon-form": "S. lactis",
+            "habitat-form": "yoghurt"
+        },
+        {
+            "doc": "817654",
+            "section": "title",
+            "title": "[Effect of vitamins on the biosynthesis of nisin by a Streptococcus lactis culture].",
+            "taxon-id": "1358",
+            "taxon-name": "Lactococcus lactis",
+            "habitat-id": "OBT:002170",
+            "habitat-name": "fermented tomato juice",
+            "taxon-form": "Streptococcus lactis",
+            "habitat-form": "tomato juice"
+        },
+        {
+            "doc": "10509247",
+            "section": "abstract",
+            "title": "Production of menaquinones by lactic acid bacteria.",
+            "taxon-id": "1358",
+            "taxon-name": "Lactococcus lactis",
+            "habitat-id": "OBT:001607",
+            "habitat-name": "fermented soymilk",
+            "taxon-form": "Lactococcus lactis ssp. cremoris YIT",
+            "habitat-form": "soymilk"
+        },
+        {
+            "doc": "4205191",
+            "section": "abstract",
+            "title": "Extrachromosomal elements in group N streptococci.",
+            "taxon-id": "1358",
+            "taxon-name": "Lactococcus lactis",
+            "habitat-id": "OBT:001818",
+            "habitat-name": "yoghurt from fermented soybean milk",
+            "taxon-form": "Streptococcus lactis",
+            "habitat-form": "soy"
+        },
+        {
+            "doc": "4205191",
+            "section": "abstract",
+            "title": "Extrachromosomal elements in group N streptococci.",
+            "taxon-id": "1359",
+            "taxon-name": "Lactococcus lactis subsp. cremoris",
+            "habitat-id": "OBT:001818",
+            "habitat-name": "yoghurt from fermented soybean milk",
+            "taxon-form": "S. cremoris",
+            "habitat-form": "soy"
+        },
+        {
+            "doc": "4205191",
+            "section": "abstract",
+            "title": "Extrachromosomal elements in group N streptococci.",
+            "taxon-id": "1360",
+            "taxon-name": "Lactococcus lactis subsp. lactis",
+            "habitat-id": "OBT:001818",
+            "habitat-name": "yoghurt from fermented soybean milk",
+            "taxon-form": "S. diacetilactis",
+            "habitat-form": "soy"
+        },
+        {
+            "doc": "22378551",
+            "section": "abstract",
+            "title": "Genetic engineering of Lactococcus lactis to produce an amylase inhibitor for development of an anti-diabetes biodrug.",
+            "taxon-id": "1358",
+            "taxon-name": "Lactococcus lactis",
+            "habitat-id": "OBT:002080",
+            "habitat-name": "yogurt",
+            "taxon-form": "Lactococcus lactis",
+            "habitat-form": "yogurt"
+        }
+    ],
+    "count": 34
 }
 ----

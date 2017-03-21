@@ -10,21 +10,23 @@ Return all known entity types.
 
 === Parameters
 
-| Parameter | Source | Type | Effect |
-|:---------:|:------:|:----:|:-------|
-| `fields` | Query | `String[]` | Information to display for each entity type `id` `name` `root` `all` |
+|===
+| Parameter | Source | Type | Effect
 
+| `fields` | Query | `String[]` | Information to display for each entity type `id` `name` `root` `all`
+|===
 
 === Examples
 
-.http://bibliome.jouy.inra.fr/demo/alvisdb/obt/entities[/entities]
 
----
+[source,json]
+.http://bibliome.jouy.inra.fr/demo/alvisdb/obt/entities[`/entities`]
+----
 [
     {
         "id": "habitat",
         "name": "Habitat",
-        "root": "OBT:000000"
+        "root": "OBT:000000" <1>
     },
     {
         "id": "taxon",
@@ -32,4 +34,5 @@ Return all known entity types.
         "root": "2"
     }
 ]
----
+----
+

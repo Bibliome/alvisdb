@@ -1,5 +1,3 @@
-{% capture url %}http://bibliome.jouy.inra.fr/demo/alvisdb/obt{% endcapture %}
-
 # API
 
 ## Entity types
@@ -19,7 +17,7 @@ Return all known entity types.
 
 ### Examples
 
-[**`/entities?fields=name&fields=root`**]({{url}}/entities?fields=name&fields=root)
+[**`/entities?fields=name&fields=root`**](http://bibliome.jouy.inra.fr/demo/alvisdb/obt/entities?fields=name&fields=root)
 ```json
 [
     {

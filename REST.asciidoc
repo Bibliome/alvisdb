@@ -359,3 +359,137 @@ Return all entities of the specified type in which the name or at least one syno
     }
 ]
 ----
+
+== Relation count
+
+----
+/treemap/{rel}/{role}/{id}
+----
+
+Return the amount of each entity at the other end of the specified relation.
+
+=== Parameters
+
+|===
+| Parameter | Source | Type | Effect
+
+| `rel` | Path | `String` | Relation type identifier
+| `role` | Path | `String` | Argument role
+| `id` | Path | `String` | Entity identifier
+| `oth` | Query | `String` | Entity identifier for the other argument of the relation
+| `fun` | Query | `String` | Count function, default: `count`, possible values: `sqrt`, `log`, `count`
+| `depth` | Query | `Integer` | Number of entity levels to display, default: `1`
+
+|===
+
+=== Examples
+
+[source,json]
+.http://bibliome.jouy.inra.fr/demo/alvisdb/obt/treemap/localization/taxon/1358?depth=2&oth=OBT:000827[/treemap/localization/taxon/1358?depth=2&oth=OBT:000827]
+----
+{
+    "items": [
+        {
+            "id": "OBT:001136",
+            "parentid": "",
+            "text": "fermented plant-based food",
+            "value": 10,
+            "data": {
+                "id": "OBT:001136",
+                "depth": 1,
+                "count": 10
+            }
+        },
+        {
+            "id": "OBT:001608",
+            "parentid": "OBT:001136",
+            "text": "fermented vegetable product",
+            "value": 7,
+            "data": {
+                "id": "OBT:001608",
+                "depth": 2,
+                "count": 7
+            }
+        },
+        {
+            "id": "OBT:001668",
+            "parentid": "OBT:001136",
+            "text": "fermented soybean",
+            "value": 3,
+            "data": {
+                "id": "OBT:001668",
+                "depth": 2,
+                "count": 3
+            }
+        },
+        {
+            "id": "OBT:001355",
+            "parentid": "",
+            "text": "fermented liquid",
+            "value": 6,
+            "data": {
+                "id": "OBT:001355",
+                "depth": 1,
+                "count": 6
+            }
+        },
+        {
+            "id": "OBT:001607",
+            "parentid": "OBT:001355",
+            "text": "fermented soymilk",
+            "value": 4,
+            "data": {
+                "id": "OBT:001607",
+                "depth": 2,
+                "count": 4
+            }
+        },
+        {
+            "id": "OBT:001639",
+            "parentid": "OBT:001355",
+            "text": "fermented beverage",
+            "value": 2,
+            "data": {
+                "id": "OBT:001639",
+                "depth": 2,
+                "count": 2
+            }
+        },
+        {
+            "id": "OBT:001306",
+            "parentid": "",
+            "text": "fermented meat",
+            "value": 1,
+            "data": {
+                "id": "OBT:001306",
+                "depth": 1,
+                "count": 1
+            }
+        },
+        {
+            "id": "OBT:001334",
+            "parentid": "",
+            "text": "fermented seafood",
+            "value": 1,
+            "data": {
+                "id": "OBT:001334",
+                "depth": 1,
+                "count": 1
+            }
+        },
+        {
+            "id": "OBT:001436",
+            "parentid": "OBT:001334",
+            "text": "fermented shrimp paste",
+            "value": 1,
+            "data": {
+                "id": "OBT:001436",
+                "depth": 2,
+                "count": 1
+            }
+        }
+    ],
+    "total": 18,
+    "max": 10
+}
+----

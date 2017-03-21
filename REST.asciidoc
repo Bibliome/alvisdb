@@ -20,13 +20,13 @@ Return all known entity types.
 
 
 [source,json]
-.http://bibliome.jouy.inra.fr/demo/alvisdb/obt/entities[`/entities`]
+.http://bibliome.jouy.inra.fr/demo/alvisdb/obt/entities?fields=name&fields=root[`/entities?fields=name&fields=root`]
 ----
 [
     {
         "id": "habitat",
         "name": "Habitat",
-        "root": "OBT:000000" <1>
+        "root": "OBT:000000"
     },
     {
         "id": "taxon",

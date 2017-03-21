@@ -80,7 +80,7 @@ Return the entity with the specified type and identifier.
 | Parameter | Source | Type | Effect
 
 | `type` | Path | `String` | Type of entity
-| `id` | Path | `String` | Entity identifier to query
+| `id` | Path | `String` | Entity identifier to query, this parameter can be omitted in which case the root entity for the specified type is returned
 | `fields` | Query | `String[]` | Information to display, `id` `type` `name` `synonyms` `path` `children` `all`
 | `typefields` | Query | `String[]` | Information to display for the entity type, `id` `name` `root` `all`, ignored if `type` is not included in `fields`
 | `pathfields` | Query | `String[]` | Information to display for each path (ancestor) element, the possible values are the same as `fields`, ignored if `path` is not included in `fields`
@@ -167,7 +167,7 @@ Return the entity with the specified type and identifier.
 ----
 
 [source,json]
-.http://bibliome.jouy.inra.fr/demo/alvisdb/obt/entity/habitat/OBT:000003?fields=all&childfields=name&pathfields=name[/entity/habitat/OBT:000003?fields=all&childfields=name&pathfields=name]
+.http://bibliome.jouy.inra.fr/demo/alvisdb/obt/entity/habitat/OBT:000003?fields=all&childfields=name&pathfields=name[`/entity/habitat/OBT:000003?fields=all&childfields=name&pathfields=name`]
 ----
 {
     "id": "OBT:000003",
@@ -199,4 +199,163 @@ Return the entity with the specified type and identifier.
         }
     ]
 }
+----
+
+
+== Entity name completion
+
+----
+/complete/{type}/{text}
+----
+
+Return all entities of the specified type in which the name or at least one synonym starts with the specified text.
+
+=== Parameters
+
+|===
+| Parameter | Source | Type | Effect
+
+| `type` | Path | `String` | Type of entity to query
+| `text` | Path | `String` | Prefix of the name or synonym
+| `contains` | Query | `Boolean` | If `true`, then search for names and synonyms that *contain* `text`
+| `max` | Query | `Integer` | Number of entities to return, default: `10`
+| `relation` | Query | `String`
+| `role` | Query | `String` | If both `relation` and `role` are set, then only return entities referenced in a relation instance
+
+|===
+
+=== Examples
+
+[source,json]
+.http://bibliome.jouy.inra.fr/demo/alvisdb/obt/complete/taxon/Bacil[`/complete/taxon/Bacil`]
+----
+[
+    {
+        "value": "247",
+        "label": "Bacillus canicolis brevis [Empedobacter brevis]"
+    },
+    {
+        "value": "245",
+        "label": "Bacillus aquatilis [Flavobacterium aquatile]"
+    },
+    {
+        "value": "287",
+        "label": "Bacillus pyocyaneus [Pseudomonas aeruginosa]"
+    },
+    {
+        "value": "305",
+        "label": "Bacillus solanacearum [Ralstonia solanacearum]"
+    },
+    {
+        "value": "316",
+        "label": "Bacillus nitrogenes [Pseudomonas stutzeri]"
+    },
+    {
+        "value": "294",
+        "label": "Bacillus fluorescens liquefaciens [Pseudomonas fluorescens]"
+    },
+    {
+        "value": "303",
+        "label": "Bacillus fluorescens putidus [Pseudomonas putida]"
+    },
+    {
+        "value": "339",
+        "label": "Bacillus campestris [Xanthomonas campestris]"
+    },
+    {
+        "value": "358",
+        "label": "Bacillus radiobacter [Agrobacterium tumefaciens]"
+    },
+    {
+        "value": "353",
+        "label": "Bacillus azotobacter [Azotobacter chroococcum]"
+    }
+]
+----
+
+[source,json]
+.http://bibliome.jouy.inra.fr/demo/alvisdb/obt/complete/habitat/food?contains=true&max=20[`/complete/habitat/food?contains=true&max=20`]
+----
+[
+    {
+        "value": "OBT:001359",
+        "label": "blackberry as food"
+    },
+    {
+        "value": "OBT:001361",
+        "label": "orange as food"
+    },
+    {
+        "value": "OBT:001363",
+        "label": "wine grape as food"
+    },
+    {
+        "value": "OBT:001364",
+        "label": "strawberry as food"
+    },
+    {
+        "value": "OBT:001365",
+        "label": "pear as food"
+    },
+    {
+        "value": "OBT:001366",
+        "label": "quince as food"
+    },
+    {
+        "value": "OBT:001367",
+        "label": "mandarin as food"
+    },
+    {
+        "value": "OBT:001368",
+        "label": "apple as food"
+    },
+    {
+        "value": "OBT:001369",
+        "label": "lemon as food"
+    },
+    {
+        "value": "OBT:001370",
+        "label": "lime as food"
+    },
+    {
+        "value": "OBT:001372",
+        "label": "cherry as food"
+    },
+    {
+        "value": "OBT:001373",
+        "label": "peach as food"
+    },
+    {
+        "value": "OBT:001374",
+        "label": "plum as food"
+    },
+    {
+        "value": "OBT:001375",
+        "label": "nectarine as food"
+    },
+    {
+        "value": "OBT:000256",
+        "label": "liquid food"
+    },
+    {
+        "value": "OBT:001376",
+        "label": "apricot as food"
+    },
+    {
+        "value": "OBT:001380",
+        "label": "date as food"
+    },
+    {
+        "value": "OBT:001381",
+        "label": "fig as food"
+    },
+    {
+        "value": "OBT:001382",
+        "label": "kaki as food"
+    },
+    {
+        "value": "OBT:001384",
+        "label": "kiwi as food"
+    }
+]
 ----

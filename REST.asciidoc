@@ -1,24 +1,25 @@
-# API
+= API
 
-## Entity types
+== Entity types
 
-```
+---
 /entities
-```
+---
 
 Return all known entity types.
 
-### Parameters
+=== Parameters
 
 | Parameter | Source | Type | Effect |
 |:---------:|:------:|:----:|:-------|
 | `fields` | Query | `String[]` | Information to display for each entity type `id` `name` `root` `all` |
 
 
-### Examples
+=== Examples
 
-[`/relations`](http://bibliome.jouy.inra.fr/demo/alvisdb/obt/relations)
-```json
+.http://bibliome.jouy.inra.fr/demo/alvisdb/obt/entities[/entities]
+
+---
 [
     {
         "id": "habitat",
@@ -31,32 +32,4 @@ Return all known entity types.
         "root": "2"
     }
 ]
-```
-
-## Relation types
-
-```
-/relations
-```
-
-Return all known relation types.
-
-### Examples
-
-[`/relations`](http://bibliome.jouy.inra.fr/demo/alvisdb/obt/relations)
-```json
-[{
-    "id": "localization",
-    "name": "Localization",
-    "left": {
-        "role": "taxon",
-        "name": "Bacterium",
-        "type": "taxon"
-    },
-    "right": {
-        "role": "habitat",
-        "name": "Habitat",
-        "type": "habitat"
-    }
-}]
-```
+---

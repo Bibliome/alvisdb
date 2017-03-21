@@ -12,12 +12,12 @@ Return all known entity types.
 
 | Parameter | Source | Type | Effect |
 |:---------:|:------:|:----:|:-------|
-| `fields` | Query | `String[]` | `id` `name` `root` `all` |
+| `fields` | Query | `String[]` | Information to display for each entity type `id` `name` `root` `all` |
 
 
 ### Examples
 
-[**`/entities?fields=name&fields=root`**](http://bibliome.jouy.inra.fr/demo/alvisdb/obt/entities?fields=name&fields=root)
+[`/relations`](http://bibliome.jouy.inra.fr/demo/alvisdb/obt/relations)
 ```json
 [
     {
@@ -31,4 +31,32 @@ Return all known entity types.
         "root": "2"
     }
 ]
+```
+
+## Relation types
+
+```
+/relations
+```
+
+Return all known relation types.
+
+### Examples
+
+[`/relations`](http://bibliome.jouy.inra.fr/demo/alvisdb/obt/relations)
+```json
+[{
+    "id": "localization",
+    "name": "Localization",
+    "left": {
+        "role": "taxon",
+        "name": "Bacterium",
+        "type": "taxon"
+    },
+    "right": {
+        "role": "habitat",
+        "name": "Habitat",
+        "type": "habitat"
+    }
+}]
 ```

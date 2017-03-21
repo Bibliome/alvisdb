@@ -2,9 +2,9 @@
 
 == Entity types
 
----
+----
 /entities
----
+----
 
 Return all known entity types.
 
@@ -17,7 +17,6 @@ Return all known entity types.
 |===
 
 === Examples
-
 
 [source,json]
 .http://bibliome.jouy.inra.fr/demo/alvisdb/obt/entities?fields=name&fields=root[`/entities?fields=name&fields=root`]
@@ -36,3 +35,168 @@ Return all known entity types.
 ]
 ----
 
+
+== Relation types
+
+----
+/relations
+----
+
+Return all known relation types.
+
+=== Examples
+
+[source,json]
+.http://bibliome.jouy.inra.fr/demo/alvisdb/obt/relations[`/relations`]
+----
+[{
+    "id": "localization",
+    "name": "Localization",
+    "left": {
+        "role": "taxon",
+        "name": "Bacterium",
+        "type": "taxon"
+    },
+    "right": {
+        "role": "habitat",
+        "name": "Habitat",
+        "type": "habitat"
+    }
+}]
+----
+
+
+== Entity instance
+
+----
+/entity/{type}/{id}
+----
+
+Return the entity with the specified type and identifier.
+
+=== Parameters
+
+|===
+| Parameter | Source | Type | Effect
+
+| `type` | Path | `String` | Type of entity
+| `id` | Path | `String` | Entity identifier to query
+| `fields` | Query | `String[]` | Information to display, `id` `type` `name` `synonyms` `path` `children` `all`
+| `typefields` | Query | `String[]` | Information to display for the entity type, `id` `name` `root` `all`, ignored if `type` is not included in `fields`
+| `pathfields` | Query | `String[]` | Information to display for each path (ancestor) element, the possible values are the same as `fields`, ignored if `path` is not included in `fields`
+| `childfields` | Query | `String[]` | Information to display for each child element, the possible values are the same as `fields`, ignored if `children` is not included in `fields`
+|===
+
+=== Examples
+
+[source,json]
+.http://bibliome.jouy.inra.fr/demo/alvisdb/obt/entity/taxon/2?fields=name[`/entity/taxon/2?fields=name`]
+----
+{
+    "id": "2",
+    "type": "taxon",
+    "name": "Bacteria"
+}
+----
+
+[source,json]
+.http://bibliome.jouy.inra.fr/demo/alvisdb/obt/entity/taxon/562?fields=all&childfields=name[`/entity/taxon/562?fields=all&childfields=name`]
+----
+{
+    "id": "562",
+    "type": "taxon",
+    "synonyms": [
+        "Bacillus coli",
+        "B . coli",
+        "bacterium 10a",
+        "E . coli",
+        "Escherichia sp. MAR",
+        "E. coli",
+        "CCUG 29300",
+        "CCUG 24",
+        "Enterococcus coli",
+        "B coli",
+        "\"Bacillus coli\" Migula 1895",
+        "Escherichia\/Shigella coli",
+        "NCTC 9001",
+        "Escherchia coli",
+        "B. coli",
+        "Escherichia coli (Migula 1895) Castellani and Chalmers 1919",
+        "Bacterium coli",
+        "E coli",
+        "CIP 54.8",
+        "JCM 1649",
+        "DSM 30083",
+        "E.coli",
+        "NBRC 102203",
+        "\"Bacterium coli commune\" Escherich 1885",
+        "LMG 2092",
+        "ATCC 11775",
+        "\"Bacterium coli\" (Migula 1895) Lehmann and Neumann 1896",
+        "Eschericia coli",
+        "NCCB 54008",
+        "bacterium E3",
+        "Escherichia coli",
+        "B.coli",
+        "Bacterium coli commune"
+    ],
+    "name": "Escherichia coli",
+    "path": [
+        "2",
+        "1224",
+        "1236",
+        "91347",
+        "543",
+        "561",
+        "562"
+    ],
+    "children": [
+        {
+            "id": "37762",
+            "type": "taxon",
+            "name": "Escherichia coli B"
+        },
+        {
+            "id": "83334",
+            "type": "taxon",
+            "name": "Escherichia coli O157:H7"
+        },
+        ...
+    ]
+}
+----
+
+[source,json]
+.http://bibliome.jouy.inra.fr/demo/alvisdb/obt/entity/habitat/OBT:000003?fields=all&childfields=name&pathfields=name[/entity/habitat/OBT:000003?fields=all&childfields=name&pathfields=name]
+----
+{
+    "id": "OBT:000003",
+    "type": "habitat",
+    "synonyms": ["food"],
+    "name": "food",
+    "path": [
+        {
+            "id": "OBT:000000",
+            "type": "habitat",
+            "name": "bacteria habitat"
+        },
+        {
+            "id": "OBT:000003",
+            "type": "habitat",
+            "name": "food"
+        }
+    ],
+    "children": [
+        {
+            "id": "OBT:000019",
+            "type": "habitat",
+            "name": "animal feed"
+        },
+        {
+            "id": "OBT:000035",
+            "type": "habitat",
+            "name": "food for human"
+        }
+    ]
+}
+----

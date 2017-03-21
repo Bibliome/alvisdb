@@ -1,6 +1,15 @@
 = API
 
-:toc:
+== Table of Contents
+
+* <<entity-types>>
+* <<relation-types>>
+* <<entity-instance>>
+* <<entity-name-completion>>
+* <<relation-count>>
+* <<relation-instances>>
+
+---
 
 == Entity types
 
@@ -37,6 +46,7 @@ Return all known entity types.
 ]
 ----
 
+---
 
 == Relation types
 
@@ -67,6 +77,7 @@ Return all known relation types.
 }]
 ----
 
+---
 
 == Entity instance
 
@@ -203,6 +214,7 @@ Return the entity with the specified type and identifier.
 }
 ----
 
+---
 
 == Entity name completion
 
@@ -362,6 +374,8 @@ Return all entities of the specified type in which the name or at least one syno
 ]
 ----
 
+---
+
 == Relation count
 
 ----
@@ -495,6 +509,8 @@ Return the amount of each entity at the other end of the specified relation.
     "max": 10
 }
 ----
+
+---
 
 == Relation instances
 

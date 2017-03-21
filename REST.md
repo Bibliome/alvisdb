@@ -1,3 +1,5 @@
+{% capture url %}http://bibliome.jouy.inra.fr/demo/alvisdb/obt{% endcapture %}
+
 # API
 
 ## Entity types
@@ -11,13 +13,13 @@ Return all known entity types.
 ### Parameters
 
 | Parameter | Source | Type | Effect |
-|:----------:|:-----:|:------:|:-------|
-| `fields` | Query | `String[]` | `id`, `name`, `root`, `all` |
+|:---------:|:------:|:----:|:-------|
+| `fields` | Query | `String[]` | `id` `name` `root` `all` |
 
 
 ### Examples
 
-**`/entities?fields=name&fields=root`**
+[**`/entities?fields=name&fields=root`**]({{url}}/entities?fields=name&fields=root)
 ```json
 [
     {

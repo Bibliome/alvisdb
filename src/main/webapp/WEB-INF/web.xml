@@ -20,4 +20,9 @@
 		<servlet-name>Jersey REST Service</servlet-name>
 		<url-pattern>/*</url-pattern>
 	</servlet-mapping>
+
+	<context-param>
+		<param-name>alvisdb.config</param-name>
+		<param-value>alvisdb.xml</param-value>
+	</context-param>
 </web-app>

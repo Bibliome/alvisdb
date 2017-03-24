@@ -6,18 +6,25 @@
 	<display-name>alvisdb</display-name>
 
 	<servlet>
-		<servlet-name>Jersey REST Service</servlet-name>
+		<servlet-name>AlvisDB</servlet-name>
 		<servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
-		<!-- Register resources and providers under com.vogella.jersey.first package. -->
 		<init-param>
 			<param-name>jersey.config.server.provider.packages</param-name>
 			<param-value>org.bibliome.alvisdb.rest</param-value>
+		</init-param>
+		<init-param>
+			<param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>
+			<param-value>true</param-value>
+		</init-param>
+		<init-param>
+			<param-name>jersey.config.servlet.filter.forwardOn404</param-name>
+			<param-value>1</param-value>
 		</init-param>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 
 	<servlet-mapping>
-		<servlet-name>Jersey REST Service</servlet-name>
+		<servlet-name>AlvisDB</servlet-name>
 		<url-pattern>/*</url-pattern>
 	</servlet-mapping>
 

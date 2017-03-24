@@ -1,7 +1,8 @@
 package org.bibliome.alvisdb.rest;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.List;
 
@@ -15,6 +16,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.bibliome.alvisdb.ADBArgument;
 import org.bibliome.alvisdb.ADBDocument;
@@ -33,7 +35,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
-@Path("/obt")
+@Path("")
 public class AlvisDBRest {
 	public static final String CONFIG_PARAM = "alvisdb.config";
 	
@@ -124,25 +126,6 @@ public class AlvisDBRest {
 		catch (ADBException|JSONException|IOException e) {
 			throw new RuntimeException(e);
 		}
-	}
-	
-	
-	
-	
-	@GET
-	@Produces(MediaType.TEXT_HTML)
-	@Path("browse")
-	public InputStream browse() {
-		Class<?> klass = getClass();
-		return klass.getResourceAsStream("browse.html");
-	}
-	
-	@GET
-	@Produces(MediaType.TEXT_HTML)
-	@Path("browse2")
-	public InputStream browse2() {
-		Class<?> klass = getClass();
-		return klass.getResourceAsStream("browse2.html");
 	}
 
 	@GET
@@ -382,27 +365,45 @@ public class AlvisDBRest {
 		}
 	}
 
+//	@GET
+//	@Produces(MediaType.TEXT_HTML)
+//	@Path("browse")
+//	public InputStream browse() {
+//		Class<?> klass = getClass();
+//		return klass.getResourceAsStream("browse.html");
+//	}
+	
 	@GET
-	@Produces("text/javascript")
-	@Path("lib/{jssource}")
-	public InputStream jslib(@PathParam("jssource") String jssource) {
-		Class<?> klass = getClass();
-		return klass.getResourceAsStream(jssource);
+	@Produces(MediaType.TEXT_HTML)
+	@Path("browse2")
+	public Response browse2() throws URISyntaxException {
+		return Response
+				.status(Status.SEE_OTHER)
+				.location(new URI("../browse2.html"))
+				.build();
 	}
 
-	@GET
-	@Produces("text/css")
-	@Path("css/{css}")
-	public InputStream css(@PathParam("css") String css) {
-		Class<?> klass = getClass();
-		return klass.getResourceAsStream(css);
-	}
+//	@GET
+//	@Produces("text/javascript")
+//	@Path("lib/{jssource}")
+//	public InputStream jslib(@PathParam("jssource") String jssource) {
+//		Class<?> klass = getClass();
+//		return klass.getResourceAsStream(jssource);
+//	}
 
-	@GET
-	@Produces("image/*")
-	@Path("css/images/{image}")
-	public InputStream image(@PathParam("image") String image) {
-		Class<?> klass = getClass();
-		return klass.getResourceAsStream(image);
-	}
+//	@GET
+//	@Produces("text/css")
+//	@Path("css/{css}")
+//	public InputStream css(@PathParam("css") String css) {
+//		Class<?> klass = getClass();
+//		return klass.getResourceAsStream(css);
+//	}
+
+//	@GET
+//	@Produces("image/*")
+//	@Path("css/images/{image}")
+//	public InputStream image(@PathParam("image") String image) {
+//		Class<?> klass = getClass();
+//		return klass.getResourceAsStream(image);
+//	}
 }

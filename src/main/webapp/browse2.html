@@ -330,11 +330,11 @@ var depthPlus = {
 
 var launch = function() {
 	$.ajax({
-		url: 'entity/taxon',
+		url: 'obt/entity/taxon',
 		success: function(taxonData, status, xhr) {
 			info['taxon'].current = taxonData.id;
 			$.ajax({
-				url: 'entity/habitat',
+				url: 'obt/entity/habitat',
 				success: function(habitatData, status, xhr) {
 					info['habitat'].current = habitatData.id;
 					updatePath('taxon');
@@ -406,7 +406,7 @@ var showTable = function() {
 
     var source = {
         datatype: 'json',
-        url: 'table/localization/taxon/'+info.taxon.current+'?oth='+info.habitat.current,
+        url: 'obt/table/localization/taxon/'+info.taxon.current+'?oth='+info.habitat.current,
         root: 'list',
         formatdata: function(data) {
         	console.log(data);
@@ -453,7 +453,7 @@ var showTable = function() {
         showstatusbar: true,
         renderstatusbar: function (statusbar) {
         	var container = $('<div class="export"></div>');
-        	var url = 'export/localization/taxon/'+info.taxon.current+'?oth='+info.habitat.current;
+        	var url = 'obt/export/localization/taxon/'+info.taxon.current+'?oth='+info.habitat.current;
         	statusbar.append(container);
         	var convert = $('<a class="export-text" alt="Download the data as CSV" target="_new" href="'+url+'">CSV</a>');
         	container.append(convert);
@@ -512,7 +512,7 @@ var createDepth = function(entityType, direction) {
 var createSearch = function(entityType) {
 	var complete = function(query, response) {
 		$.ajax({
-			url: 'complete/'+entityType+'/'+query+'?contains=true&max=20&relation=localization&role='+entityType,
+			url: 'obt/complete/'+entityType+'/'+query+'?contains=true&max=20&relation=localization&role='+entityType,
 			success: function(data, status, xhr) {
 		        response(data);
 		    }
@@ -545,7 +545,7 @@ var updateEntity = function(entityType, id) {
 var updatePath = function(entityType) {
 	var id = info[entityType].current;
 	$.ajax({
-		url: 'entity/' + entityType + '/' + id + '?fields=path&pathfields=name',
+		url: 'obt/entity/' + entityType + '/' + id + '?fields=path&pathfields=name',
 		success: function(data, status, xhr) {
 			var pathEltId = entityType + '-path';
 			var pathButtonsEltId = entityType + '-path-buttons';
@@ -636,7 +636,7 @@ var updateTreemap = function(entityType) {
 	var wait = $('#' + entityType + '-treemap-wait');
 	wait.css({display: 'block'});
 	$.ajax({
-		url: 'treemap/localization/' + otherType + '/' + otherId + '?fun=sqrt&depth='+info[entityType].depth+'&oth=' + id,
+		url: 'obt/treemap/localization/' + otherType + '/' + otherId + '?fun=sqrt&depth='+info[entityType].depth+'&oth=' + id,
 		success: function(data, status, xhr) {
 			var max = data.max;
             var source =

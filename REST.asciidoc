@@ -1,0 +1,660 @@
+= API
+
+== Table of Contents
+
+* <<entity-types>>
+* <<relation-types>>
+* <<entity-instance>>
+* <<entity-name-completion>>
+* <<relation-count>>
+* <<relation-instances>>
+
+---
+
+== Entity types
+
+----
+/entities
+----
+
+Return all known entity types.
+
+=== Parameters
+
+|===
+| Parameter | Source | Type | Effect
+
+| `fields` | Query | `String[]` | Information to display for each entity type `id` `name` `root` `all`
+|===
+
+=== Examples
+
+[source,json]
+.http://bibliome.jouy.inra.fr/demo/alvisdb/obt/entities?fields=name&fields=root[`/entities?fields=name&fields=root`]
+----
+[
+    {
+        "id": "habitat",
+        "name": "Habitat",
+        "root": "OBT:000000"
+    },
+    {
+        "id": "taxon",
+        "name": "Taxon",
+        "root": "2"
+    }
+]
+----
+
+---
+
+== Relation types
+
+----
+/relations
+----
+
+Return all known relation types.
+
+=== Examples
+
+[source,json]
+.http://bibliome.jouy.inra.fr/demo/alvisdb/obt/relations[`/relations`]
+----
+[{
+    "id": "localization",
+    "name": "Localization",
+    "left": {
+        "role": "taxon",
+        "name": "Bacterium",
+        "type": "taxon"
+    },
+    "right": {
+        "role": "habitat",
+        "name": "Habitat",
+        "type": "habitat"
+    }
+}]
+----
+
+---
+
+== Entity instance
+
+----
+/entity/{type}/{id}
+----
+
+Return the entity with the specified type and identifier.
+
+=== Parameters
+
+|===
+| Parameter | Source | Type | Effect
+
+| `type` | Path | `String` | Type of entity
+| `id` | Path | `String` | Entity identifier to query, this parameter can be omitted in which case the root entity for the specified type is returned
+| `fields` | Query | `String[]` | Information to display, `id` `type` `name` `synonyms` `path` `children` `all`
+| `typefields` | Query | `String[]` | Information to display for the entity type, `id` `name` `root` `all`, ignored if `type` is not included in `fields`
+| `pathfields` | Query | `String[]` | Information to display for each path (ancestor) element, the possible values are the same as `fields`, ignored if `path` is not included in `fields`
+| `childfields` | Query | `String[]` | Information to display for each child element, the possible values are the same as `fields`, ignored if `children` is not included in `fields`
+|===
+
+=== Examples
+
+[source,json]
+.http://bibliome.jouy.inra.fr/demo/alvisdb/obt/entity/taxon/2?fields=name[`/entity/taxon/2?fields=name`]
+----
+{
+    "id": "2",
+    "type": "taxon",
+    "name": "Bacteria"
+}
+----
+
+[source,json]
+.http://bibliome.jouy.inra.fr/demo/alvisdb/obt/entity/taxon/562?fields=all&childfields=name[`/entity/taxon/562?fields=all&childfields=name`]
+----
+{
+    "id": "562",
+    "type": "taxon",
+    "synonyms": [
+        "Bacillus coli",
+        "B . coli",
+        "bacterium 10a",
+        "E . coli",
+        "Escherichia sp. MAR",
+        "E. coli",
+        "CCUG 29300",
+        "CCUG 24",
+        "Enterococcus coli",
+        "B coli",
+        "\"Bacillus coli\" Migula 1895",
+        "Escherichia\/Shigella coli",
+        "NCTC 9001",
+        "Escherchia coli",
+        "B. coli",
+        "Escherichia coli (Migula 1895) Castellani and Chalmers 1919",
+        "Bacterium coli",
+        "E coli",
+        "CIP 54.8",
+        "JCM 1649",
+        "DSM 30083",
+        "E.coli",
+        "NBRC 102203",
+        "\"Bacterium coli commune\" Escherich 1885",
+        "LMG 2092",
+        "ATCC 11775",
+        "\"Bacterium coli\" (Migula 1895) Lehmann and Neumann 1896",
+        "Eschericia coli",
+        "NCCB 54008",
+        "bacterium E3",
+        "Escherichia coli",
+        "B.coli",
+        "Bacterium coli commune"
+    ],
+    "name": "Escherichia coli",
+    "path": [
+        "2",
+        "1224",
+        "1236",
+        "91347",
+        "543",
+        "561",
+        "562"
+    ],
+    "children": [
+        {
+            "id": "37762",
+            "type": "taxon",
+            "name": "Escherichia coli B"
+        },
+        {
+            "id": "83334",
+            "type": "taxon",
+            "name": "Escherichia coli O157:H7"
+        },
+        ...
+    ]
+}
+----
+
+[source,json]
+.http://bibliome.jouy.inra.fr/demo/alvisdb/obt/entity/habitat/OBT:000003?fields=all&childfields=name&pathfields=name[`/entity/habitat/OBT:000003?fields=all&childfields=name&pathfields=name`]
+----
+{
+    "id": "OBT:000003",
+    "type": "habitat",
+    "synonyms": ["food"],
+    "name": "food",
+    "path": [
+        {
+            "id": "OBT:000000",
+            "type": "habitat",
+            "name": "bacteria habitat"
+        },
+        {
+            "id": "OBT:000003",
+            "type": "habitat",
+            "name": "food"
+        }
+    ],
+    "children": [
+        {
+            "id": "OBT:000019",
+            "type": "habitat",
+            "name": "animal feed"
+        },
+        {
+            "id": "OBT:000035",
+            "type": "habitat",
+            "name": "food for human"
+        }
+    ]
+}
+----
+
+---
+
+== Entity name completion
+
+----
+/complete/{type}/{text}
+----
+
+Return all entities of the specified type in which the name or at least one synonym starts with the specified text.
+
+=== Parameters
+
+|===
+| Parameter | Source | Type | Effect
+
+| `type` | Path | `String` | Type of entity to query
+| `text` | Path | `String` | Prefix of the name or synonym
+| `contains` | Query | `Boolean` | If `true`, then search for names and synonyms that *contain* `text`
+| `max` | Query | `Integer` | Number of entities to return, default: `10`
+| `relation` | Query | `String`
+| `role` | Query | `String` | If both `relation` and `role` are set, then only return entities referenced in a relation instance
+
+|===
+
+=== Examples
+
+[source,json]
+.http://bibliome.jouy.inra.fr/demo/alvisdb/obt/complete/taxon/Bacil[`/complete/taxon/Bacil`]
+----
+[
+    {
+        "value": "247",
+        "label": "Bacillus canicolis brevis [Empedobacter brevis]"
+    },
+    {
+        "value": "245",
+        "label": "Bacillus aquatilis [Flavobacterium aquatile]"
+    },
+    {
+        "value": "287",
+        "label": "Bacillus pyocyaneus [Pseudomonas aeruginosa]"
+    },
+    {
+        "value": "305",
+        "label": "Bacillus solanacearum [Ralstonia solanacearum]"
+    },
+    {
+        "value": "316",
+        "label": "Bacillus nitrogenes [Pseudomonas stutzeri]"
+    },
+    {
+        "value": "294",
+        "label": "Bacillus fluorescens liquefaciens [Pseudomonas fluorescens]"
+    },
+    {
+        "value": "303",
+        "label": "Bacillus fluorescens putidus [Pseudomonas putida]"
+    },
+    {
+        "value": "339",
+        "label": "Bacillus campestris [Xanthomonas campestris]"
+    },
+    {
+        "value": "358",
+        "label": "Bacillus radiobacter [Agrobacterium tumefaciens]"
+    },
+    {
+        "value": "353",
+        "label": "Bacillus azotobacter [Azotobacter chroococcum]"
+    }
+]
+----
+
+[source,json]
+.http://bibliome.jouy.inra.fr/demo/alvisdb/obt/complete/habitat/food?contains=true&max=20[`/complete/habitat/food?contains=true&max=20`]
+----
+[
+    {
+        "value": "OBT:001359",
+        "label": "blackberry as food"
+    },
+    {
+        "value": "OBT:001361",
+        "label": "orange as food"
+    },
+    {
+        "value": "OBT:001363",
+        "label": "wine grape as food"
+    },
+    {
+        "value": "OBT:001364",
+        "label": "strawberry as food"
+    },
+    {
+        "value": "OBT:001365",
+        "label": "pear as food"
+    },
+    {
+        "value": "OBT:001366",
+        "label": "quince as food"
+    },
+    {
+        "value": "OBT:001367",
+        "label": "mandarin as food"
+    },
+    {
+        "value": "OBT:001368",
+        "label": "apple as food"
+    },
+    {
+        "value": "OBT:001369",
+        "label": "lemon as food"
+    },
+    {
+        "value": "OBT:001370",
+        "label": "lime as food"
+    },
+    {
+        "value": "OBT:001372",
+        "label": "cherry as food"
+    },
+    {
+        "value": "OBT:001373",
+        "label": "peach as food"
+    },
+    {
+        "value": "OBT:001374",
+        "label": "plum as food"
+    },
+    {
+        "value": "OBT:001375",
+        "label": "nectarine as food"
+    },
+    {
+        "value": "OBT:000256",
+        "label": "liquid food"
+    },
+    {
+        "value": "OBT:001376",
+        "label": "apricot as food"
+    },
+    {
+        "value": "OBT:001380",
+        "label": "date as food"
+    },
+    {
+        "value": "OBT:001381",
+        "label": "fig as food"
+    },
+    {
+        "value": "OBT:001382",
+        "label": "kaki as food"
+    },
+    {
+        "value": "OBT:001384",
+        "label": "kiwi as food"
+    }
+]
+----
+
+---
+
+== Relation count
+
+----
+/treemap/{rel}/{role}/{id}
+----
+
+Return the amount of each entity at the other end of the specified relation.
+
+=== Parameters
+
+|===
+| Parameter | Source | Type | Effect
+
+| `rel` | Path | `String` | Relation type identifier
+| `role` | Path | `String` | Argument role
+| `id` | Path | `String` | Entity identifier
+| `oth` | Query | `String` | Entity identifier for the other argument of the relation
+| `fun` | Query | `String` | Count function, default: `count`, possible values: `sqrt`, `log`, `count`
+| `depth` | Query | `Integer` | Number of entity levels to display, default: `1`
+
+|===
+
+=== Examples
+
+[source,json]
+.http://bibliome.jouy.inra.fr/demo/alvisdb/obt/treemap/localization/taxon/1358?depth=2&oth=OBT:000827[`/treemap/localization/taxon/1358?depth=2&oth=OBT:000827`]
+----
+{
+    "items": [
+        {
+            "id": "OBT:001136",
+            "parentid": "",
+            "text": "fermented plant-based food",
+            "value": 10,
+            "data": {
+                "id": "OBT:001136",
+                "depth": 1,
+                "count": 10
+            }
+        },
+        {
+            "id": "OBT:001608",
+            "parentid": "OBT:001136",
+            "text": "fermented vegetable product",
+            "value": 7,
+            "data": {
+                "id": "OBT:001608",
+                "depth": 2,
+                "count": 7
+            }
+        },
+        {
+            "id": "OBT:001668",
+            "parentid": "OBT:001136",
+            "text": "fermented soybean",
+            "value": 3,
+            "data": {
+                "id": "OBT:001668",
+                "depth": 2,
+                "count": 3
+            }
+        },
+        {
+            "id": "OBT:001355",
+            "parentid": "",
+            "text": "fermented liquid",
+            "value": 6,
+            "data": {
+                "id": "OBT:001355",
+                "depth": 1,
+                "count": 6
+            }
+        },
+        {
+            "id": "OBT:001607",
+            "parentid": "OBT:001355",
+            "text": "fermented soymilk",
+            "value": 4,
+            "data": {
+                "id": "OBT:001607",
+                "depth": 2,
+                "count": 4
+            }
+        },
+        {
+            "id": "OBT:001639",
+            "parentid": "OBT:001355",
+            "text": "fermented beverage",
+            "value": 2,
+            "data": {
+                "id": "OBT:001639",
+                "depth": 2,
+                "count": 2
+            }
+        },
+        {
+            "id": "OBT:001306",
+            "parentid": "",
+            "text": "fermented meat",
+            "value": 1,
+            "data": {
+                "id": "OBT:001306",
+                "depth": 1,
+                "count": 1
+            }
+        },
+        {
+            "id": "OBT:001334",
+            "parentid": "",
+            "text": "fermented seafood",
+            "value": 1,
+            "data": {
+                "id": "OBT:001334",
+                "depth": 1,
+                "count": 1
+            }
+        },
+        {
+            "id": "OBT:001436",
+            "parentid": "OBT:001334",
+            "text": "fermented shrimp paste",
+            "value": 1,
+            "data": {
+                "id": "OBT:001436",
+                "depth": 2,
+                "count": 1
+            }
+        }
+    ],
+    "total": 18,
+    "max": 10
+}
+----
+
+---
+
+== Relation instances
+
+----
+/table/{rel}/{role}/{id}
+----
+
+Return the instances of the specified relations.
+
+=== Parameters
+
+|===
+| Parameter | Source | Type | Effect
+
+| `rel` | Path | `String` | Relation type identifier
+| `role` | Path | `String` | Argument role
+| `id` | Path | `String` | Entity identifier
+| `oth` | Query | `String` | Entity identifier for the other argument of the relation
+| `pagenum` | Query | `Integer`
+| `pagesize` | Query | `Integer` | Pagination, default: `0` / `10`
+| `sortdatafield` | Query | `String`
+| `sortorder` | Query | `String`
+
+|===
+
+=== Examples
+
+
+[source,json]
+.http://bibliome.jouy.inra.fr/demo/alvisdb/obt/table/localization/taxon/1358?oth=OBT:000827[`/table/localization/taxon/1358?oth=OBT:000827`]
+----
+{
+    "list": [
+        {
+            "doc": "12007863",
+            "section": "title",
+            "title": "Influence of growth conditions on the production of a nisin-like bacteriocin by Lactococcus lactis subsp. lactis A164 isolated from kimchi.",
+            "taxon-id": "1360",
+            "taxon-name": "Lactococcus lactis subsp. lactis",
+            "habitat-id": "OBT:001795",
+            "habitat-name": "kimchi",
+            "taxon-form": "Lactococcus lactis subsp. lactis",
+            "habitat-form": "kimchi"
+        },
+        {
+            "doc": "12007863",
+            "section": "abstract",
+            "title": "Influence of growth conditions on the production of a nisin-like bacteriocin by Lactococcus lactis subsp. lactis A164 isolated from kimchi.",
+            "taxon-id": "1360",
+            "taxon-name": "Lactococcus lactis subsp. lactis",
+            "habitat-id": "OBT:001795",
+            "habitat-name": "kimchi",
+            "taxon-form": "Lactococcus lactis subsp. lactis",
+            "habitat-form": "kimchi"
+        },
+        {
+            "doc": "2126446",
+            "section": "abstract",
+            "title": "Scanning electron microscopic and texture studies on characteristic consistency of Nordic ropy sour milk.",
+            "taxon-id": "1358",
+            "taxon-name": "Lactococcus lactis",
+            "habitat-id": "OBT:002281",
+            "habitat-name": "sour milk",
+            "taxon-form": "Lactococcus lactis ssp. cremoris SBT",
+            "habitat-form": "ropy sour milk"
+        },
+        {
+            "doc": "3933276",
+            "section": "abstract",
+            "title": "Secretory and serum antibodies against Streptococcus lactis, Streptococcus thermophilus, and Lactobacillus bulgaricus in relation to ingestion of fermented milk products.",
+            "taxon-id": "1358",
+            "taxon-name": "Lactococcus lactis",
+            "habitat-id": "OBT:002080",
+            "habitat-name": "yogurt",
+            "taxon-form": "S. lactis",
+            "habitat-form": "yoghurt"
+        },
+        {
+            "doc": "817654",
+            "section": "title",
+            "title": "[Effect of vitamins on the biosynthesis of nisin by a Streptococcus lactis culture].",
+            "taxon-id": "1358",
+            "taxon-name": "Lactococcus lactis",
+            "habitat-id": "OBT:002170",
+            "habitat-name": "fermented tomato juice",
+            "taxon-form": "Streptococcus lactis",
+            "habitat-form": "tomato juice"
+        },
+        {
+            "doc": "10509247",
+            "section": "abstract",
+            "title": "Production of menaquinones by lactic acid bacteria.",
+            "taxon-id": "1358",
+            "taxon-name": "Lactococcus lactis",
+            "habitat-id": "OBT:001607",
+            "habitat-name": "fermented soymilk",
+            "taxon-form": "Lactococcus lactis ssp. cremoris YIT",
+            "habitat-form": "soymilk"
+        },
+        {
+            "doc": "4205191",
+            "section": "abstract",
+            "title": "Extrachromosomal elements in group N streptococci.",
+            "taxon-id": "1358",
+            "taxon-name": "Lactococcus lactis",
+            "habitat-id": "OBT:001818",
+            "habitat-name": "yoghurt from fermented soybean milk",
+            "taxon-form": "Streptococcus lactis",
+            "habitat-form": "soy"
+        },
+        {
+            "doc": "4205191",
+            "section": "abstract",
+            "title": "Extrachromosomal elements in group N streptococci.",
+            "taxon-id": "1359",
+            "taxon-name": "Lactococcus lactis subsp. cremoris",
+            "habitat-id": "OBT:001818",
+            "habitat-name": "yoghurt from fermented soybean milk",
+            "taxon-form": "S. cremoris",
+            "habitat-form": "soy"
+        },
+        {
+            "doc": "4205191",
+            "section": "abstract",
+            "title": "Extrachromosomal elements in group N streptococci.",
+            "taxon-id": "1360",
+            "taxon-name": "Lactococcus lactis subsp. lactis",
+            "habitat-id": "OBT:001818",
+            "habitat-name": "yoghurt from fermented soybean milk",
+            "taxon-form": "S. diacetilactis",
+            "habitat-form": "soy"
+        },
+        {
+            "doc": "22378551",
+            "section": "abstract",
+            "title": "Genetic engineering of Lactococcus lactis to produce an amylase inhibitor for development of an anti-diabetes biodrug.",
+            "taxon-id": "1358",
+            "taxon-name": "Lactococcus lactis",
+            "habitat-id": "OBT:002080",
+            "habitat-name": "yogurt",
+            "taxon-form": "Lactococcus lactis",
+            "habitat-form": "yogurt"
+        }
+    ],
+    "count": 34
+}
+----

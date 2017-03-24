@@ -364,46 +364,14 @@ public class AlvisDBRest {
 			throw new RuntimeException(e);
 		}
 	}
-
-//	@GET
-//	@Produces(MediaType.TEXT_HTML)
-//	@Path("browse")
-//	public InputStream browse() {
-//		Class<?> klass = getClass();
-//		return klass.getResourceAsStream("browse.html");
-//	}
 	
 	@GET
 	@Produces(MediaType.TEXT_HTML)
 	@Path("browse2")
-	public Response browse2() throws URISyntaxException {
+	public static Response browse2() throws URISyntaxException {
 		return Response
 				.status(Status.SEE_OTHER)
 				.location(new URI("../browse2.html"))
 				.build();
 	}
-
-//	@GET
-//	@Produces("text/javascript")
-//	@Path("lib/{jssource}")
-//	public InputStream jslib(@PathParam("jssource") String jssource) {
-//		Class<?> klass = getClass();
-//		return klass.getResourceAsStream(jssource);
-//	}
-
-//	@GET
-//	@Produces("text/css")
-//	@Path("css/{css}")
-//	public InputStream css(@PathParam("css") String css) {
-//		Class<?> klass = getClass();
-//		return klass.getResourceAsStream(css);
-//	}
-
-//	@GET
-//	@Produces("image/*")
-//	@Path("css/images/{image}")
-//	public InputStream image(@PathParam("image") String image) {
-//		Class<?> klass = getClass();
-//		return klass.getResourceAsStream(image);
-//	}
 }

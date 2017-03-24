@@ -409,7 +409,6 @@ var showTable = function() {
         url: 'obt/table/localization/taxon/'+info.taxon.current+'?oth='+info.habitat.current,
         root: 'list',
         formatdata: function(data) {
-        	console.log(data);
         	if (data.sortdatafield === 'title') {
         		data.sortdatafield = 'taxon-title';
         	}
@@ -532,7 +531,6 @@ var createSearch = function(entityType) {
 };
 
 var updateEntity = function(entityType, id) {
-	console.log(entityType + ' = ' + id);
 	info[entityType].current = id;
 	info[entityType].depth = 1;
 	$('#' + entityType + '-depth-minus').jqxButton({ disabled: true });

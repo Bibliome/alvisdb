@@ -3,3 +3,4 @@ test/
 .classpath
 .project
 .settings/
+expose-repository.sh

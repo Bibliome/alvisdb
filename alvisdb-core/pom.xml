@@ -27,7 +27,7 @@
   </dependencies>
   
   <properties>
-    <lucene.version>3.6.1</lucene.version>
+    <lucene.version>7.1.0</lucene.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 

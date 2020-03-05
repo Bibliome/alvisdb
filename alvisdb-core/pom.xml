@@ -7,7 +7,7 @@
   <parent>
     <groupId>fr.jouy.inra.maiage.bibliome</groupId>
     <artifactId>alvisdb</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <version>0.1</version>
   </parent>
   <artifactId>alvisdb-core</artifactId>
   <name>AlvisDB Core</name>
